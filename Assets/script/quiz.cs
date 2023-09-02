@@ -14,7 +14,7 @@ public class quiz : MonoBehaviour
 
     [Header("Answers")]
     [SerializeField] GameObject[] answerButtons; // 4 adet cevap butonumuz olduðu için gameobjecti array olarak tanýmladýk 
-    int correctAnswerIndex;
+    public int correctAnswerIndex;
     bool hasAnsweredEarly; // þuanda true
 
     [Header("Button Colors")]
@@ -25,9 +25,14 @@ public class quiz : MonoBehaviour
     [SerializeField] Image TimerImage;
     Timer timer;
 
+    [Header("Scoring")]
+    [SerializeField] TextMeshProUGUI scoreText;
+    ScoreKeeper scoreKeeper;
+
     void Start()
     {
         timer = FindAnyObjectByType<Timer>();
+        scoreKeeper = FindObjectOfType<ScoreKeeper>();
     }
 
     void Update()
@@ -53,6 +58,7 @@ public class quiz : MonoBehaviour
         DisplayAnswer(index);
         SetButtonState(false); // çevap seçildiðinde bu satýrý çagýrdýk
         timer.CancelTimer(); // süreyi sýfýrlayan fonksiyonu çagýrdýk
+        scoreText.text = scoreKeeper.GetScoreString();
     }
 
     void DisplayAnswer(int index)
@@ -64,7 +70,7 @@ public class quiz : MonoBehaviour
             questionText.text = "Correct!";
             buttonImage = answerButtons[index].GetComponent<Image>();  // doðru cevap verildiðinde görüntünün deðiþmesi için
             buttonImage.sprite = correctAnswerSprite;
-
+            scoreKeeper.IncrementCorrectAnswers();
         }
         else
         {
@@ -77,10 +83,14 @@ public class quiz : MonoBehaviour
     }
     void GetNextquestion()
     {
-        SetButtonState(true);
-        Displayquestion();
-        SetDefaultButtonSprites();
-        GetRandomQuestion();
+        if(questions.Count > 0)
+        {
+            SetButtonState(true);
+            SetDefaultButtonSprites();
+            GetRandomQuestion();
+            Displayquestion();
+            scoreKeeper.IncrementQuestionSeen();
+        }
     }
 
     void GetRandomQuestion()
@@ -97,7 +107,7 @@ public class quiz : MonoBehaviour
 
     void Displayquestion()
     {
-    
+
         questionText.text = currentQuestion.Getquestion();
 
         for (int i = 0; i < answerButtons.Length ; i++) //i<4 yerine i<answerButtons.Length de yazabilirdik
