@@ -39,4 +39,4 @@ Contributions to QuizMaster are welcome! If you'd like to contribute to this pro
 
 ## **License**
 
-This project is licensed under the [MIT License](https://chat.openai.com/c/LICENSE.md).
+This project is licensed under the [MIT License](./LICENSE.md).
